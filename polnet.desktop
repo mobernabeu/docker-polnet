@@ -1,0 +1,6 @@
+[Desktop Entry] 
+Type=Application
+Name=PolNet
+Path=/usr/local/bin
+Exec=run_PolNet.sh /opt/mcr/v85
+Terminal=true
