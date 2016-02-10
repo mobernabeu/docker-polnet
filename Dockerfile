@@ -21,6 +21,12 @@ RUN wget http://www.mathworks.com/supportfiles/downloads/R2015a/deployment_files
     rm MCR_R2015a_glnxa64_installer.zip
 
 ##
+# MCR installs its own linux runtime libraries and uses $LD_LIBRARY_PATH to give them priority over system ones.
+# Python code running inside PolNet and trying to load the expat package finds the wrong version of libexpat.so.1 and fails at runtime.
+##
+RUN ln -fs /lib/x86_64-linux-gnu/libexpat.so.1 /opt/mcr/v85/bin/glnxa64/libexpat.so.1
+
+##
 # Download and install the standalone version of PolNet
 ##
 WORKDIR /tmp
