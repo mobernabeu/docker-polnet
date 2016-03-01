@@ -9,6 +9,7 @@ RUN apt-get update && \
     apt-get install -y qhull-bin unzip wget && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+RUN pip install matplotlib
 
 ##
 # Download and install MATLAB's MCR
