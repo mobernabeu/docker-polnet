@@ -31,7 +31,7 @@ RUN ln -fs /lib/x86_64-linux-gnu/libexpat.so.1 /opt/mcr/v85/bin/glnxa64/libexpat
 # Download and install the standalone version of PolNet
 ##
 WORKDIR /tmp
-RUN wget https://www.dropbox.com/s/ru2l14aledjho6r/PolNet_files.zip?dl=0 && \
+RUN wget https://www.dropbox.com/s/xp4c2jskwy5qw1g/PolNet_files.zip?dl=0 && \
     mv PolNet_files.zip?dl=0 PolNet_files.zip && \
     unzip PolNet_files.zip && \
     cp PolNet_files/* /usr/local/bin/ && \
@@ -44,6 +44,17 @@ RUN wget https://www.dropbox.com/s/ru2l14aledjho6r/PolNet_files.zip?dl=0 && \
 RUN mkdir /etc/skel/Desktop/
 COPY polnet.desktop /etc/skel/Desktop/
 RUN ln -s /data /etc/skel/Desktop/
+
+##
+# Download and place the example data distributed with the protocol paper in a Desktop subdirectory of any new user
+##
+WORKDIR /tmp
+RUN wget https://www.dropbox.com/s/nc8l6xig26jbw0a/990_Example2-skeleton.tif?dl=0 https://www.dropbox.com/s/n0pforgr7r7dc9p/990_Example2-flat.tif?dl=0 && \
+    mv 990_Example2-skeleton.tif?dl=0 990_Example2-skeleton.tif && \
+    mv 990_Example2-flat.tif?dl=0 990_Example2-flat.tif && \
+    mkdir /etc/skel/Desktop/paper_example_data/ && \
+    mv 990_Example2* /etc/skel/Desktop/paper_example_data/ && \
+    echo "Any intermediate file saved to this directory will disappear every time that the container is stopped and restarted. Copy the example data to /data (which maps to a directory in the host machine) in order for the intermediate files to persist." > /etc/skel/Desktop/paper_example_data/README.txt
 
 ##
 # Run PolNet at login
