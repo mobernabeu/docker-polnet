@@ -39,22 +39,22 @@ RUN wget https://www.dropbox.com/s/xp4c2jskwy5qw1g/PolNet_files.zip?dl=0 && \
     rm -rf PolNet_files*
 
 ##
-# Place a PolNet launcher and a symlink to the data directory on the Desktop of any new user
+# Place a PolNet launcher and a symlink to the data directory on the Desktop of the ubuntu user home space
 ##
-RUN mkdir /etc/skel/Desktop/
-COPY polnet.desktop /etc/skel/Desktop/
-RUN ln -s /data /etc/skel/Desktop/
+RUN mkdir -p /home/ubuntu/Desktop/
+COPY polnet.desktop /home/ubuntu/Desktop/
+RUN ln -s /data /home/ubuntu/Desktop/
 
 ##
-# Download and place the example data distributed with the protocol paper in a Desktop subdirectory of any new user
+# Download and place the example data distributed with the protocol paper in a Desktop subdirectory of the ubuntu user home space
 ##
 WORKDIR /tmp
 RUN wget https://www.dropbox.com/s/nc8l6xig26jbw0a/990_Example2-skeleton.tif?dl=0 https://www.dropbox.com/s/n0pforgr7r7dc9p/990_Example2-flat.tif?dl=0 && \
     mv 990_Example2-skeleton.tif?dl=0 990_Example2-skeleton.tif && \
     mv 990_Example2-flat.tif?dl=0 990_Example2-flat.tif && \
-    mkdir /etc/skel/Desktop/paper_example_data/ && \
-    mv 990_Example2* /etc/skel/Desktop/paper_example_data/ && \
-    echo "Any intermediate file saved to this directory will disappear every time that the container is stopped and restarted. Copy the example data to /data (which maps to a directory in the host machine) in order for the intermediate files to persist." > /etc/skel/Desktop/paper_example_data/README.txt
+    mkdir /home/ubuntu/Desktop/paper_example_data/ && \
+    mv 990_Example2* /home/ubuntu/Desktop/paper_example_data/ && \
+    echo "Any intermediate file saved to this directory will disappear every time that the container is stopped and restarted. Copy the example data to /data (which maps to a directory in the host machine) in order for the intermediate files to persist." > /home/ubuntu/Desktop/paper_example_data/README.txt
 
 ##
 # Run PolNet at login
