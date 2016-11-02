@@ -9,7 +9,7 @@ RUN apt-get update && \
     apt-get install -y qhull-bin unzip wget libfreetype6-dev pkg-config python-tk && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-RUN pip install matplotlib pandas
+RUN pip install matplotlib pandas openpyxl
 
 ##
 # Download and install MATLAB's MCR
@@ -31,7 +31,7 @@ RUN ln -fs /lib/x86_64-linux-gnu/libexpat.so.1 /opt/mcr/v85/bin/glnxa64/libexpat
 # Download and install the standalone version of PolNet
 ##
 WORKDIR /tmp
-RUN wget https://www.dropbox.com/s/ngqx6fku196tuwu/PolNet_files.zip?dl=0 && \
+RUN wget https://www.dropbox.com/s/fozl7p1w8w92u0p/PolNet_files.zip?dl=0 && \
     mv PolNet_files.zip?dl=0 PolNet_files.zip && \
     unzip PolNet_files.zip && \
     cp PolNet_files/* /usr/local/bin/ && \

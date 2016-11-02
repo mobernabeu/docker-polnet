@@ -22,7 +22,7 @@ def SubsampleArray(array, targetLength=1000):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('results_folder', type=str, help='HemeLb results folder')
-    parser.add_argument('pixel_size', type=float, help='Pixel size in segmented MA image')
+    parser.add_argument('pixels_per_micron', type=float, help='Pixels per micron in segmented MA image')
     parser.add_argument('region_of_interest_file', type=str, help='File containing the vertices of polygon delineating the region of interest (.csv)')
     parser.add_argument('output_prefix', type=str, help='Prefix for the .xlsx file to be generated as output')
 
@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
     resultsFolder = args.results_folder
     roiFile = args.region_of_interest_file
-    pixelSize = args.pixel_size
+    pixelPerMetre = 1e6 * args.pixels_per_micron
     outputPrefix = args.output_prefix
 
     output_data = {}
@@ -51,7 +51,7 @@ if __name__ == '__main__':
         # Swap axes for consistent XY convention
         wholeBodyCoords[:, [0, 1]] = wholeBodyCoords[:, [1, 0]]
         # Turn pixel number into spatial coordinates
-        wholeBodyCoords *= pixelSize
+        wholeBodyCoords /= pixelPerMetre
 
         # Path object allows inside-the-polygon lookups
         wholeBodyPolygon = Path(wholeBodyCoords)
@@ -69,6 +69,7 @@ if __name__ == '__main__':
 
         # Compute mask telling us which results are with the ROI
         mask = wholeBodyPolygon.contains_points(flowDomainCoords)
+        assert np.any(mask), 'No results found within the ROI. Check intermediate .png files for overlap with the flow domain'
         
         results = getattr(resultsLastTimeStep, variableName)
         if variableName in ['tangentialprojectiontraction', 'velocity']:
