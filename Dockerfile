@@ -1,5 +1,5 @@
 # Taking hemelb as base image
-FROM mobernabeu/hemelb
+FROM hemelb-joslin
 MAINTAINER Miguel O. Bernabeu (miguel.bernabeu@ed.ac.uk)
 
 ##
@@ -9,7 +9,7 @@ RUN apt-get update && \
     apt-get install -y qhull-bin unzip wget libfreetype6-dev pkg-config python-tk && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-RUN pip install matplotlib
+RUN pip install matplotlib pandas
 
 ##
 # Download and install MATLAB's MCR
@@ -44,6 +44,12 @@ RUN wget https://www.dropbox.com/s/ngqx6fku196tuwu/PolNet_files.zip?dl=0 && \
 RUN mkdir -p /home/ubuntu/Desktop/
 COPY polnet.desktop /home/ubuntu/Desktop/
 RUN ln -s /data /home/ubuntu/Desktop/
+
+##
+# Copy the ROI analysing script somewhere that Python can find
+##
+COPY ExtractResultsFromROI.py /usr/local/bin/ExtractResultsFromROI
+RUN chmod +x /usr/local/bin/ExtractResultsFromROI
 
 ##
 # Download and place the example data distributed with the protocol paper in a Desktop subdirectory of the ubuntu user home space
