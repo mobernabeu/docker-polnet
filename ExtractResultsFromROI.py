@@ -21,7 +21,7 @@ def SubsampleArray(array, targetLength=1000):
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('results_folder', type=str, help='HemeLb results folder')
+    parser.add_argument('results_folder', type=str, help='HemeLb results/ folder location')
     parser.add_argument('pixels_per_micron', type=float, help='Pixels per micron in segmented MA image')
     parser.add_argument('region_of_interest_file', type=str, help='File containing the vertices of polygon delineating the region of interest (.csv)')
     parser.add_argument('output_prefix', type=str, help='Prefix for the .xlsx file to be generated as output')
@@ -36,8 +36,7 @@ if __name__ == '__main__':
     output_data = {}
     
     for (variableName, fileName) in flowVariables.iteritems():
-        resultsFileName = os.path.join(resultsFolder, 'results', 'Extracted', 
-                                       fileName)
+        resultsFileName = os.path.join(resultsFolder, 'Extracted', fileName)
 
         # Catch command line arguments
         resultsProperties = ExtractedProperty(resultsFileName)
