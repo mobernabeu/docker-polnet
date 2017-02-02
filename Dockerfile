@@ -50,6 +50,8 @@ RUN ln -s /data /home/ubuntu/Desktop/
 ##
 COPY ExtractResultsFromROI.py /usr/local/bin/ExtractResultsFromROI
 RUN chmod +x /usr/local/bin/ExtractResultsFromROI
+COPY ComputeMAFlowDrop.py /usr/local/bin/ComputeMAFlowDrop
+RUN chmod +x /usr/local/bin/ComputeMAFlowDrop
 
 ##
 # Download and place the example data distributed with the protocol paper in a Desktop subdirectory of the ubuntu user home space
