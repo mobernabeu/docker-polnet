@@ -64,11 +64,9 @@ if __name__ == '__main__':
 
         # Extract the subset of results contained inside/outside the ROI
         mean_roi = np.mean(results[mask])
-        min_roi = np.amin(results[mask])
-        max_roi = np.amax(results[mask])
-        
         mean_non_roi = np.mean(results[np.logical_not(mask)])
-        
-        print "{} min drop ratio: {}".format(variableName, min_roi / mean_non_roi)
-        print "{} mean drop ratio: {}".format(variableName, mean_roi / mean_non_roi)
-        print "{} max drop ratio: {}".format(variableName, max_roi / mean_non_roi)
+        print "{} mean drop ratio: {}".format(variableName, mean_non_roi / mean_roi)
+
+        std_roi = np.std(results[mask])
+        std_non_roi = np.std(results[np.logical_not(mask)])
+        print "{} std drop ratio: {}".format(variableName, std_non_roi / std_roi)
