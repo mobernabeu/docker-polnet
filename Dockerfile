@@ -1,5 +1,5 @@
 # Taking hemelb as base image
-FROM mobernabeu/hemelb
+FROM hemelb
 MAINTAINER Miguel O. Bernabeu (miguel.bernabeu@ed.ac.uk)
 
 ##
@@ -31,7 +31,7 @@ RUN ln -fs /lib/x86_64-linux-gnu/libexpat.so.1 /opt/mcr/v85/bin/glnxa64/libexpat
 # Download and install the standalone version of PolNet
 ##
 WORKDIR /tmp
-RUN wget https://www.dropbox.com/s/ngqx6fku196tuwu/PolNet_files.zip?dl=0 && \
+RUN wget https://www.dropbox.com/s/mn656wakrqkoiaz/PolNet_files.zip?dl=0 &&\
     mv PolNet_files.zip?dl=0 PolNet_files.zip && \
     unzip PolNet_files.zip && \
     cp PolNet_files/* /usr/local/bin/ && \
@@ -56,7 +56,7 @@ RUN wget https://www.dropbox.com/s/nc8l6xig26jbw0a/990_Example2-skeleton.tif?dl=
     mv 990_Example2* /home/ubuntu/Desktop/paper_example_data/ && \
     echo "Any intermediate file saved to this directory will disappear every time that the container is stopped and restarted. Copy the example data to /data (which maps to a directory in the host machine) in order for the intermediate files to persist." > /home/ubuntu/Desktop/paper_example_data/README.txt
 
-# The MATLAB runtime overwrites $LD_LIBRARY_PATH ignoring its previous content. Copy VMTK libraries to a visible location
+# The MATLAB runtime overwrites $LD_LIBRARY_PATH ignoring its previous content. Copy VTK/VMTK libraries to a visible location
 RUN cp $VMTKHOME/lib/lib* /usr/lib/x86_64-linux-gnu/
 
 ##
