@@ -9,7 +9,7 @@ RUN apt-get update && \
     apt-get install -y qhull-bin unzip wget libfreetype6-dev pkg-config python-tk && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-RUN pip install matplotlib pandas openpyxl
+RUN pip install matplotlib pandas openpyxl shapely descartes
 
 ##
 # Download and install MATLAB's MCR
@@ -52,6 +52,8 @@ COPY ExtractResultsFromROI.py /usr/local/bin/ExtractResultsFromROI
 RUN chmod +x /usr/local/bin/ExtractResultsFromROI
 COPY ComputeMAFlowDrop.py /usr/local/bin/ComputeMAFlowDrop
 RUN chmod +x /usr/local/bin/ComputeMAFlowDrop
+COPY ComputeMorphologicalIndices.py /usr/local/bin/ComputeMorphologicalIndices
+RUN chmod +x /usr/local/bin/ComputeMorphologicalIndices
 
 ##
 # Download and place the example data distributed with the protocol paper in a Desktop subdirectory of the ubuntu user home space
