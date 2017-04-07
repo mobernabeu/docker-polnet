@@ -6,7 +6,7 @@ MAINTAINER Miguel O. Bernabeu (miguel.bernabeu@ed.ac.uk)
 # Dependencies
 ##
 RUN apt-get update && \
-    apt-get install -y qhull-bin unzip wget libfreetype6-dev pkg-config python-tk && \
+    apt-get install -y qhull-bin unzip wget libfreetype6-dev pkg-config python-tk libgeos-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 RUN pip install matplotlib pandas openpyxl shapely descartes

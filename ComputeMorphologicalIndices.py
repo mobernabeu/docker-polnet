@@ -20,7 +20,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('pixels_per_micron', type=float, help='Pixels per micron in segmented MA image')
     parser.add_argument('ma_body_roi_file', type=str, help='File containing the vertices of polygon delineating the MA body (.csv)')
-    parser.add_argument('ma_centreline_file', type=str, help='File containing the vertices of polygon delineating the MA body (.csv)')
+    parser.add_argument('ma_centreline_file', type=str, help='File defining the MA skeleton or centreline (.vtp)')
 
     args = parser.parse_args()
 
@@ -56,13 +56,13 @@ if __name__ == '__main__':
     ax.add_patch(PolygonPatch(ma_hemespheres))
     ax.autoscale()
     plt.axis('equal')
-    plt.savefig('assymetry.png')
+    plt.savefig('asymmetry.png')
 
-    # Compute assymetry ratio
+    # Compute asymmetry ratio
     assert len(ma_hemespheres) == 2, 'Centreline must split MA body in two parts'
     areas = [ma_hemespheres[0].area, ma_hemespheres[1].area]
     print 'Areas: ', areas
-    print 'Assymetry ratio: ', max(areas) / min(areas)
+    print 'Asymmetry ratio: ', max(areas) / min(areas)
 
     # Compute body-to-neck ratio
     assert (vtk_centreline.GetPointData().GetNumberOfArrays() == 1) and (vtk_centreline.GetPointData().GetArrayName(0) == 'Radius'), 'Centreline file must contain a point data field named Radius'
