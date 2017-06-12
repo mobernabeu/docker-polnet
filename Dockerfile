@@ -5,33 +5,41 @@ MAINTAINER Miguel O. Bernabeu (miguel.bernabeu@ed.ac.uk)
 ##
 # Dependencies
 ##
-RUN apt-get update && \
-    apt-get install -y qhull-bin unzip wget libfreetype6-dev pkg-config python-tk libgeos-dev && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    qhull-bin \
+    unzip \
+    wget \
+    libfreetype6-dev \
+    pkg-config \
+    python-tk \
+    libgeos-dev \
+ && rm -rf /var/lib/apt/lists/*
 RUN pip install matplotlib pandas openpyxl shapely descartes
 
 ##
 # Download and install MATLAB's MCR
 ##
 WORKDIR /opt
-RUN wget http://www.mathworks.com/supportfiles/downloads/R2015a/deployment_files/R2015a/installers/glnxa64/MCR_R2015a_glnxa64_installer.zip && \
-    unzip MCR_R2015a_glnxa64_installer.zip && \
+RUN wget https://uk.mathworks.com/supportfiles/downloads/R2017a/deployment_files/R2017a/installers/glnxa64/MCR_R2017a_glnxa64_installer.zip && \
+    unzip MCR_R2017a_glnxa64_installer.zip && \
     mkdir /opt/mcr && \
     ./install -destinationFolder /opt/mcr -agreeToLicense yes -mode silent && \
-    rm MCR_R2015a_glnxa64_installer.zip
+    rm MCR_R2017a_glnxa64_installer.zip
 
 ##
 # MCR installs its own linux runtime libraries and uses $LD_LIBRARY_PATH to give them priority over system ones.
-# Python code running inside PolNet and trying to load the expat package finds the wrong version of libexpat.so.1 and fails at runtime.
+# There are versioning issues between them and the ones provided by Ubuntu which were used to compile various PolNet components.
+# Copy VMTK libraries to a visible location.
 ##
-RUN ln -fs /lib/x86_64-linux-gnu/libexpat.so.1 /opt/mcr/v85/bin/glnxa64/libexpat.so.1
+RUN mv /opt/mcr/v92/sys/os/glnxa64/libstdc++.so.6 /opt/mcr/v92/sys/os/glnxa64/libstdc++.so.6.bak && \
+    mv /opt/mcr/v92/bin/glnxa64/libexpat.so.1 /opt/mcr/v92/bin/glnxa64/libexpat.so.1.bak
+RUN cp $VMTKHOME/lib/lib* /usr/lib/x86_64-linux-gnu/
 
 ##
 # Download and install the standalone version of PolNet
 ##
 WORKDIR /tmp
-RUN wget https://www.dropbox.com/s/mn656wakrqkoiaz/PolNet_files.zip?dl=0 && \
+RUN wget https://www.dropbox.com/s/dnuszejdajtn5r9/PolNet_files.zip?dl=0 && \
     mv PolNet_files.zip?dl=0 PolNet_files.zip && \
     unzip PolNet_files.zip && \
     cp PolNet_files/* /usr/local/bin/ && \
@@ -39,11 +47,10 @@ RUN wget https://www.dropbox.com/s/mn656wakrqkoiaz/PolNet_files.zip?dl=0 && \
     rm -rf PolNet_files*
 
 ##
-# Place a PolNet launcher and a symlink to the data directory on the Desktop of the ubuntu user home space
+# Place a PolNet launcher and a symlink to the data directory on the Desktop of the root user home space
 ##
-RUN mkdir -p /home/ubuntu/Desktop/
-COPY polnet.desktop /home/ubuntu/Desktop/
-RUN ln -s /data /home/ubuntu/Desktop/
+COPY polnet.desktop /root/Desktop/
+RUN ln -s /data /root/Desktop/
 
 ##
 # Copy the ROI analysing script somewhere that Python can find
@@ -56,21 +63,12 @@ COPY ComputeMorphologicalIndices.py /usr/local/bin/ComputeMorphologicalIndices
 RUN chmod +x /usr/local/bin/ComputeMorphologicalIndices
 
 ##
-# Download and place the example data distributed with the protocol paper in a Desktop subdirectory of the ubuntu user home space
+# Download and place the example data distributed with the protocol paper in a Desktop subdirectory of the root user home space
 ##
 WORKDIR /tmp
 RUN wget https://www.dropbox.com/s/nc8l6xig26jbw0a/990_Example2-skeleton.tif?dl=0 https://www.dropbox.com/s/n0pforgr7r7dc9p/990_Example2-flat.tif?dl=0 && \
     mv 990_Example2-skeleton.tif?dl=0 990_Example2-skeleton.tif && \
     mv 990_Example2-flat.tif?dl=0 990_Example2-flat.tif && \
-    mkdir /home/ubuntu/Desktop/paper_example_data/ && \
-    mv 990_Example2* /home/ubuntu/Desktop/paper_example_data/ && \
-    echo "Any intermediate file saved to this directory will disappear every time that the container is stopped and restarted. Copy the example data to /data (which maps to a directory in the host machine) in order for the intermediate files to persist." > /home/ubuntu/Desktop/paper_example_data/README.txt
-
-# The MATLAB runtime overwrites $LD_LIBRARY_PATH ignoring its previous content. Copy VMTK libraries to a visible location
-RUN cp $VMTKHOME/lib/lib* /usr/lib/x86_64-linux-gnu/
-
-##
-# Run PolNet at login
-##
-#RUN mkdir /etc/xdg/autostart/
-#COPY polnet.desktop /etc/xdg/autostart/
+    mkdir /root/Desktop/paper_example_data/ && \
+    mv 990_Example2* /root/Desktop/paper_example_data/ && \
+    echo "Any intermediate file saved to this directory will disappear every time that the container is stopped and restarted. Copy the example data to /data (which maps to a directory in the host machine) in order for the intermediate files to persist." > /root/Desktop/paper_example_data/README.txt
