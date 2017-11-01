@@ -39,7 +39,7 @@ RUN cp $VMTKHOME/lib/lib* /usr/lib/x86_64-linux-gnu/
 # Download and install the standalone version of PolNet
 ##
 WORKDIR /tmp
-RUN wget https://www.dropbox.com/s/dnuszejdajtn5r9/PolNet_files.zip?dl=0 && \
+RUN wget https://www.dropbox.com/s/s6lkhhmdokjgyx7/PolNet_files.zip?dl=0 && \
     mv PolNet_files.zip?dl=0 PolNet_files.zip && \
     unzip PolNet_files.zip && \
     cp PolNet_files/* /usr/local/bin/ && \
