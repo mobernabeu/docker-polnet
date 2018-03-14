@@ -61,6 +61,8 @@ COPY ComputeMAFlowDrop.py /usr/local/bin/ComputeMAFlowDrop
 RUN chmod +x /usr/local/bin/ComputeMAFlowDrop
 COPY ComputeMorphologicalIndices.py /usr/local/bin/ComputeMorphologicalIndices
 RUN chmod +x /usr/local/bin/ComputeMorphologicalIndices
+COPY ComputeMAFlowDropPerRegions.py /usr/local/bin/ComputeMAFlowDropPerRegions
+RUN chmod +x /usr/local/bin/ComputeMAFlowDropPerRegions
 
 ##
 # Download and place the example data distributed with the protocol paper in a Desktop subdirectory of the root user home space

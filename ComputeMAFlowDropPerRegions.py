@@ -169,7 +169,7 @@ if __name__ == '__main__':
         classification_vtk = numpy_to_vtk(classification)
         classification_vtk.SetName("point_classification");
         region_classifier.GetPointData().AddArray(classification_vtk);
-        results_vtk_array = numpy_to_vtk(results[roi_mask])
+        results_vtk_array = numpy_to_vtk(results[roi_mask].astype(np.float64)) # The cast seems to be required for numpy_to_vtk to work properly with results, a np.float32 array
         results_vtk_array.SetName(variableName)
         region_classifier.GetPointData().AddArray(results_vtk_array)
         polydata_writer = vtk.vtkXMLPolyDataWriter()
@@ -181,7 +181,6 @@ if __name__ == '__main__':
         mean_roi = np.mean(results[roi_mask])
         mean_non_ma = np.mean(results[np.logical_not(ma_mask)])
         print "{} mean drop ratio: {}".format(variableName, mean_non_ma / mean_roi)
-
         std_roi = np.std(results[roi_mask])
         std_non_ma = np.std(results[np.logical_not(ma_mask)])
         print "{} std drop ratio: {}".format(variableName, std_non_ma / std_roi)
