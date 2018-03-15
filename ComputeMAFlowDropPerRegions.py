@@ -56,6 +56,20 @@ if __name__ == '__main__':
         subregionCoords /= pixelPerMetre
         # Path object allows inside-the-polygon lookups
         subregionPolygon = Path(subregionCoords)
+
+    # Load MA centreline and convert centreline coords to metres
+    vtp_reader = vtk.vtkXMLPolyDataReader()
+    vtp_reader.SetFileName(ma_centreline_file)
+    transform = vtk.vtkTransform()
+    transform.Scale(1e-6, 1e-6, 1e-6)
+    transform_filter = vtk.vtkTransformFilter()
+    transform_filter.SetInputConnection(vtp_reader.GetOutputPort());
+    transform_filter.SetTransform(transform);
+    transform_filter.Update()
+    centreline = transform_filter.GetOutput()
+
+    # Centreline radii vector in metres
+    radii = 1e-6 * vtk_to_numpy(centreline.GetPointData().GetArray('Radius'))
     
     for (variableName, fileName) in flowVariables.iteritems():
         resultsFileName = os.path.join(resultsFolder, 'Extracted', fileName)
@@ -101,17 +115,6 @@ if __name__ == '__main__':
 
         roi_results = results[roi_mask]
 
-        # Load MA centreline and convert centreline coords to metres
-        vtp_reader = vtk.vtkXMLPolyDataReader()
-        vtp_reader.SetFileName(ma_centreline_file)
-        transform = vtk.vtkTransform()
-        transform.Scale(1e-6, 1e-6, 1e-6)
-        transform_filter = vtk.vtkTransformFilter()
-        transform_filter.SetInputConnection(vtp_reader.GetOutputPort());
-        transform_filter.SetTransform(transform);
-        transform_filter.Update()
-        centreline = transform_filter.GetOutput()
-
         class CentrelineSideChecker():
             def __init__(self, centreline, whole_body_coords):
                 self.centreline = centreline
@@ -141,22 +144,22 @@ if __name__ == '__main__':
 
         centreline_side_checker = CentrelineSideChecker(centreline, wholeBodyCoords)
  
-        # Centreline radii vector in metres
-        radii = 1e-6 * vtk_to_numpy(centreline.GetPointData().GetArray('Radius'))
-
         # Loop over 3D coordinates of points within the roi and perform region classification
         point_coords_within_roi = resultsLastTimeStep.position[roi_mask]
         vtk_points_within_roi = vtk.vtkPoints()
         classification = np.empty(len(point_coords_within_roi))
+
+        def unit_distance_to_centreline_point(centreline_point_id):
+            centreline_point = centreline.GetPoints().GetPoint(centreline_point_id)
+            radius = radii[centreline_point_id]
+
+            distance = np.sqrt(vtk.vtkMath.Distance2BetweenPoints(coord, centreline_point))
+            return distance / radius
+
+        region_mapping = {True : range(number_subregions_each_side_centreline-1, -1, -1),
+                          False : range(number_subregions_each_side_centreline, 2*number_subregions_each_side_centreline)}
+
         for coord_id, coord in enumerate(point_coords_within_roi):
-
-            def unit_distance_to_centreline_point(centreline_point_id):
-                centreline_point = centreline.GetPoints().GetPoint(centreline_point_id)
-                radius = radii[centreline_point_id]
-
-                distance = np.sqrt(vtk.vtkMath.Distance2BetweenPoints(coord, centreline_point))
-                return distance / radius
-
             centreline_point_id = np.argmin([unit_distance_to_centreline_point(centreline_point_id) for centreline_point_id in range(centreline.GetNumberOfPoints())])
             unit_distance = unit_distance_to_centreline_point(centreline_point_id)
 
@@ -167,8 +170,6 @@ if __name__ == '__main__':
                 region_id -= 1
 
             in_smaller_half = centreline_side_checker.is_point_in_smaller_side(coord)
-            region_mapping = {True : range(number_subregions_each_side_centreline-1, -1, -1),
-                              False : range(number_subregions_each_side_centreline, 2*number_subregions_each_side_centreline)}
             region_id = region_mapping[in_smaller_half][region_id]
 
             vtk_points_within_roi.InsertNextPoint(coord);
