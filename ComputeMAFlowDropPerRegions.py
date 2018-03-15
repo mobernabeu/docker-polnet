@@ -151,7 +151,7 @@ if __name__ == '__main__':
 
             region_unit_width = 1.0 / number_subregions_each_side_centreline
             region_id = int(np.floor(unit_distance / region_unit_width))
-            assert unit_distance < 1.005, 'Unit distance exceeds 1: {}'.format(unit_distance)
+            assert unit_distance < 1.01, 'Unit distance exceeds 1 (with 1% tolerance): {}'.format(unit_distance)
             if unit_distance > 1:
                 region_id -= 1
 
