@@ -99,6 +99,8 @@ if __name__ == '__main__':
         if variableName in ['tangentialprojectiontraction', 'velocity']:
             results = np.linalg.norm(results, axis=1)
 
+        roi_results = results[roi_mask]
+
         # Load MA centreline and convert centreline coords to metres
         vtp_reader = vtk.vtkXMLPolyDataReader()
         vtp_reader.SetFileName(ma_centreline_file)
@@ -178,7 +180,7 @@ if __name__ == '__main__':
         classification_vtk = numpy_to_vtk(classification)
         classification_vtk.SetName("point_classification");
         region_classifier.GetPointData().AddArray(classification_vtk);
-        results_vtk_array = numpy_to_vtk(results[roi_mask].astype(np.float64)) # The cast seems to be required for numpy_to_vtk to work properly with results, a np.float32 array
+        results_vtk_array = numpy_to_vtk(roi_results)
         results_vtk_array.SetName(variableName)
         region_classifier.GetPointData().AddArray(results_vtk_array)
         polydata_writer = vtk.vtkXMLPolyDataWriter()
@@ -187,10 +189,10 @@ if __name__ == '__main__':
         polydata_writer.Update()
 
         # Extract the subset of results contained inside/outside the ROI and calculate drop indices
-        mean_roi = np.mean(results[roi_mask])
+        mean_roi = np.mean(roi_results)
         mean_non_ma = np.mean(results[np.logical_not(ma_mask)])
         print "{} mean drop ratio: {}".format(variableName, mean_non_ma / mean_roi)
-        std_roi = np.std(results[roi_mask])
+        std_roi = np.std(roi_results)
         std_non_ma = np.std(results[np.logical_not(ma_mask)])
         print "{} std drop ratio: {}".format(variableName, std_non_ma / std_roi)
 
@@ -198,7 +200,7 @@ if __name__ == '__main__':
         for region in range(args.number_subregions):
             region_mask = (classification == region)
             if np.sum(region_mask) > 0:
-                mean_roi_region = np.mean(results[roi_mask][region_mask])
+                mean_roi_region = np.mean(roi_results[region_mask])
                 print "{} mean drop ratio, region {}: {}".format(variableName, region, mean_non_ma / mean_roi_region)
-                std_roi_region = np.std(results[roi_mask][region_mask])
+                std_roi_region = np.std(roi_results[region_mask])
                 print "{} std drop ratio, region {}: {}".format(variableName, region, std_non_ma / std_roi_region)
