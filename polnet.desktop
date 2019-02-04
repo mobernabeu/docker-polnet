@@ -2,5 +2,5 @@
 Type=Application
 Name=PolNet
 Path=/usr/local/bin
-Exec=run_PolNet.sh /opt/mcr/v92
+Exec=run_PolNet.sh /opt/mcr/v95
 Terminal=true

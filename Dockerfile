@@ -20,26 +20,26 @@ RUN pip install matplotlib pandas openpyxl shapely descartes
 # Download and install MATLAB's MCR
 ##
 WORKDIR /opt
-RUN wget https://uk.mathworks.com/supportfiles/downloads/R2017a/deployment_files/R2017a/installers/glnxa64/MCR_R2017a_glnxa64_installer.zip && \
-    unzip MCR_R2017a_glnxa64_installer.zip && \
+RUN wget https://uk.mathworks.com/supportfiles/downloads/R2018b/deployment_files/R2018b/installers/glnxa64/MCR_R2018b_glnxa64_installer.zip && \
+    unzip MCR_R2018b_glnxa64_installer.zip && \
     mkdir /opt/mcr && \
     ./install -destinationFolder /opt/mcr -agreeToLicense yes -mode silent && \
-    rm MCR_R2017a_glnxa64_installer.zip
+    rm MCR_R2018b_glnxa64_installer.zip
 
 ##
 # MCR installs its own linux runtime libraries and uses $LD_LIBRARY_PATH to give them priority over system ones.
 # There are versioning issues between them and the ones provided by Ubuntu which were used to compile various PolNet components.
 # Copy VMTK libraries to a visible location.
 ##
-RUN mv /opt/mcr/v92/sys/os/glnxa64/libstdc++.so.6 /opt/mcr/v92/sys/os/glnxa64/libstdc++.so.6.bak && \
-    mv /opt/mcr/v92/bin/glnxa64/libexpat.so.1 /opt/mcr/v92/bin/glnxa64/libexpat.so.1.bak
+#RUN mv /opt/mcr/v95/sys/os/glnxa64/libstdc++.so.6 /opt/mcr/v95/sys/os/glnxa64/libstdc++.so.6.bak && \
+RUN mv /opt/mcr/v95/bin/glnxa64/libexpat.so.1 /opt/mcr/v95/bin/glnxa64/libexpat.so.1.bak
 RUN cp $VMTKHOME/lib/lib* /usr/lib/x86_64-linux-gnu/
 
 ##
 # Download and install the standalone version of PolNet
 ##
 WORKDIR /tmp
-RUN wget https://www.dropbox.com/s/3nd5wnstti6u6pz/PolNet_files.zip?dl=0 && \
+RUN wget https://www.dropbox.com/s/x7qm8p4f80qfazx/PolNet_files.zip?dl=0 && \
     mv PolNet_files.zip?dl=0 PolNet_files.zip && \
     unzip PolNet_files.zip && \
     cp PolNet_files/* /usr/local/bin/ && \
