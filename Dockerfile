@@ -39,6 +39,12 @@ RUN wget https://www.dropbox.com/s/mn656wakrqkoiaz/PolNet_files.zip?dl=0 &&\
     rm -rf PolNet_files*
 
 ##
+# Check out hemelb-hoff repo somewhere visible
+##
+WORKDIR /usr/local/bin
+RUN git clone git@github.com:EPCCed/hemelb-hoff.git
+
+##
 # Place a PolNet launcher and a symlink to the data directory on the Desktop of the ubuntu user home space
 ##
 RUN mkdir -p /home/ubuntu/Desktop/
