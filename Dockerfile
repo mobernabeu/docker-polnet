@@ -1,5 +1,5 @@
 # Taking hemelb as base image
-FROM hemelb
+FROM mobernabeu/hemelb
 MAINTAINER Miguel O. Bernabeu (miguel.bernabeu@ed.ac.uk)
 
 ##
