@@ -1,5 +1,5 @@
 # Taking hemelb as base image
-FROM mobernabeu/hemelb
+FROM mobernabeu/hemelb-mouse
 MAINTAINER Miguel O. Bernabeu (miguel.bernabeu@ed.ac.uk)
 
 ##
@@ -65,9 +65,6 @@ RUN wget https://www.dropbox.com/s/nc8l6xig26jbw0a/990_Example2-skeleton.tif?dl=
     mkdir /root/Desktop/paper_example_data/ && \
     mv 990_Example2* /root/Desktop/paper_example_data/ && \
     echo "Any intermediate file saved to this directory will disappear every time that the container is stopped and restarted. Copy the example data to /data (which maps to a directory in the host machine) in order for the intermediate files to persist." > /root/Desktop/paper_example_data/README.txt
-
-# The MATLAB runtime overwrites $LD_LIBRARY_PATH ignoring its previous content. Copy VTK/VMTK libraries to a visible location
-RUN cp $VMTKHOME/lib/lib* /usr/lib/x86_64-linux-gnu/
 
 ##
 # Run PolNet at login
